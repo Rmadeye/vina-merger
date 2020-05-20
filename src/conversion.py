@@ -1,6 +1,7 @@
 from biopandas.pdb import PandasPdb
 import numpy as np, os
 from datetime import datetime
+from src.utils import RMSD_calculator
 
 class Converter:
     def __init__(self, protein_file, flex_file):
@@ -17,7 +18,7 @@ class Converter:
 
         aalist = ['ALA', 'ARG','ASN','ASP','CYS','GLU','GLN','GLY','HIS',
                           'ILE','LEU','LYS','MET','PHE','PRO','SER',
-                          'THR','TRP','TYR','VAL', 'HIE','HID','ASX','GLX']
+                          'THR','TRP','TYR','VAL', 'HIE','HID','ASX','GLX', 'HIP']
 
 
         flex_df.df['ATOM'].loc[
@@ -39,7 +40,9 @@ class Converter:
 
         if len(flex_df.df['HETATM']) == 0:
             hetatms = flex_df.df['ATOM'].loc[flex_df.df['ATOM']['record_name'] == 'HETATM']
+            hetatms = hetatms.drop(['line_idx'], axis = 1)
             prot_df.df['ATOM'] = prot_df.df['ATOM'].append(hetatms, ignore_index = True)
+
         else:
             hetatm_df = flex_df.df['HETATM']
             hetatm_df['segment_id'] = hetatm_df['segment_id'].iloc[0:0]
@@ -51,7 +54,6 @@ class Converter:
 
             prot_df.df['ATOM'] = prot_df.df['ATOM'].append(hetatm_df, ignore_index = True)
 
-        prot_df.df['OTHERS'] = prot_df.df['OTHERS'].iloc[0:0]
 
         remarks = {'record_name': 'REMARK',
             'entry': '  Created on {}, using mrfpdb by Rmadeye'.format(time)}
