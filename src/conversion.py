@@ -1,6 +1,9 @@
-from biopandas.pdb import PandasPdb
-import numpy as np, os
 from datetime import datetime
+
+import numpy as np
+import os
+from biopandas.pdb import PandasPdb
+
 
 class Converter:
     def __init__(self, protein_file, flex_file):
@@ -48,23 +51,28 @@ class Converter:
             hetatm_df['segment_id'] = hetatm_df['segment_id'].fillna('')
             hetatm_df['blank_4'] = hetatm_df['blank_4'].iloc[0:0]
             hetatm_df['blank_4'] = hetatm_df['blank_4'].fillna('')
-            hetatm_df = hetatm_df.drop(['line_idx'], axis = 1)
+            hetatm_df = hetatm_df.drop(['line_idx'], axis=1)
 
-
-            prot_df.df['ATOM'] = prot_df.df['ATOM'].append(hetatm_df, ignore_index = True)
-
+            prot_df.df['ATOM'] = prot_df.df['ATOM'].append(hetatm_df, ignore_index=True)
 
         remarks = {'record_name': 'REMARK',
-            'entry': '  Created on {}, using mrfpdb by Rmadeye'.format(time)}
+                   'entry': '  Created on {}, using mrfpdb by Rmadeye'.format(time)}
+        prot_df.df['OTHERS'] = prot_df.df['OTHERS'].iloc[0:0]
 
+        try:
+            vina = flex_df.df['OTHERS'].loc[flex_df.df['OTHERS']['entry'].str.contains("VINA")]
+            prot_df.df['OTHERS'] = prot_df.df['OTHERS'].append(vina, ignore_index=True)
+        except:
+            print("No information about VINA energy found in the ligand file")
 
-        prot_df.df['OTHERS'] = prot_df.df['OTHERS'].append(remarks, ignore_index = True)
+        prot_df.df['OTHERS'] = prot_df.df['OTHERS'].append(remarks, ignore_index=True)
+
         output_name = (
-                os.path.basename(self.protein).split('.')[0]+'-'+(
-            os.path.basename(self.flex)).split('.')[0]+'.pdb'
+                os.path.basename(self.protein).split('.')[0] + '-' + (
+            os.path.basename(self.flex)).split('.')[0] + '.pdb'
         )
-
-        return prot_df.to_pdb(path='out/{}'.format(output_name),
-                     records=['ATOM','OTHERS'],
-                     gz=False,
-                     append_newline=True)
+        print(os.getcwd() + '{}'.format(output_name))
+        return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
+                              records=['ATOM', 'OTHERS'],
+                              gz=False,
+                              append_newline=True)
