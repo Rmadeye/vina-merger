@@ -1,7 +1,6 @@
 from biopandas.pdb import PandasPdb
 import numpy as np, os
 from datetime import datetime
-from src.utils import RMSD_calculator
 
 class Converter:
     def __init__(self, protein_file, flex_file):
