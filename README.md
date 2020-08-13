@@ -1,5 +1,6 @@
 # vina-merger
 AutoDockVina input protein - output docking files merger
+For automatable version check CLI branch
 
 ## Installation
 1. Clone this repository
