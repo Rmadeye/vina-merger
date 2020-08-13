@@ -1,14 +1,17 @@
 import os
+
 from biopandas.pdb import PandasPdb
+
 from src.conversion import Converter
 
 
 class PDBQTprep:
-    def __init__(self, protein_file: str, flex_file: str):
+    def __init__(self, protein_file: str, flex_file: str, plip: bool):
         self.prot = protein_file
         self.flex = flex_file
         self.protname = os.path.basename(self.prot)
         self.flexname = os.path.basename(self.flex)
+        self.plip = plip
 
     def files_preparation(self):
         def prepare_ligand():
@@ -21,13 +24,6 @@ class PDBQTprep:
                                   records=['ATOM', 'HETATM'],
                                   gz=False,
                                   append_newline=True)
-
-
-        aalist = ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'CYX', 'GLU', 'GLN', 'GLY', 'HIS',
-                  'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER',
-                  'THR', 'TRP', 'TYR', 'VAL', 'HIE', 'HID', 'ASX', 'GLX', 'HIP']
-
-
 
         def prepare_protein():
             prot_df = PandasPdb().read_pdb(self.prot)
@@ -49,11 +45,6 @@ class PDBQTprep:
 
         prepare_protein()
         prepare_ligand()
-
+        print(self.plip)
         return Converter(os.getcwd() + '/{}-dehyd.pdb'.format(self.protname.split('.')[0]),
-                         os.getcwd() + '/{}-prep.pdb'.format(self.flexname.split('.')[0])).convert()
-
-#
-#
-# if __name__ == "__main__":
-#     PDBQTprep('../sample/prot.pdb','../sample/lig_messed.pdbqt').files_preparation()
+                         os.getcwd() + '/{}-prep.pdb'.format(self.flexname.split('.')[0]), self.plip).convert()

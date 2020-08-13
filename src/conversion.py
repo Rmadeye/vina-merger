@@ -1,15 +1,17 @@
+import os
 from datetime import datetime
-from biopandas.pdb import PandasPdb
-from src.plip_extension import ObtainInteractionsFromComplex
 
 import numpy as np
-import os
+from biopandas.pdb import PandasPdb
+
+from src.plip_extension import ObtainInteractionsFromComplex
 
 
 class Converter:
-    def __init__(self, protein_file, flex_file):
+    def __init__(self, protein_file, flex_file, plip: bool):
         self.protein = protein_file
         self.flex = flex_file
+        self.plip = plip
 
     def convert(self):
 
@@ -70,8 +72,15 @@ class Converter:
                 os.path.basename(self.protein).split('.')[0] + '-' + (
             os.path.basename(self.flex)).split('.')[0] + '.pdb'
         )
-        return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
-                              records=['ATOM', 'OTHERS'],
-                              gz=False,
-                              append_newline=True), os.remove(self.protein), os.remove(self.flex), \
-               ObtainInteractionsFromComplex(output_name).connect_retrieve()
+
+        if self.plip:
+            return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
+                                  records=['ATOM', 'OTHERS'],
+                                  gz=False,
+                                  append_newline=True), os.remove(self.protein), os.remove(self.flex), \
+                   ObtainInteractionsFromComplex(output_name).connect_retrieve()
+        else:
+            return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
+                                  records=['ATOM', 'OTHERS'],
+                                  gz=False,
+                                  append_newline=True), os.remove(self.protein), os.remove(self.flex)

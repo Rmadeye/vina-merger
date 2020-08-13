@@ -1,5 +1,5 @@
 # vina-merger
-AutoDockVina input protein - output docking files merger
+AutoDockVina input protein - output docking files merger  - command line version
 
 ## Installation
 1. Clone this repository
@@ -20,12 +20,8 @@ $ pip install -r requirements.txt
 ```
 ## Usage
 ```
-$ python3 merge-it.py
+$ ./merge-it.py -ir protein.pdb -if ligand.pdb -p (optional, for PLIP interaction autoanalysis)
 ```
-Once the window is open, following steps must be followed:
-1. Choose pdb structure of your protein **before** docking
-2. Choose pdb/pdbqt file of your docked file.
-3. Click **run**, results are found in /out directory
 
 ## Important
 
