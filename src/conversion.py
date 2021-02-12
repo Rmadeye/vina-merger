@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from biopandas.pdb import PandasPdb
 
-from src.plip_extension import ObtainInteractionsFromComplex
+# from src.plip_extension import ObtainInteractionsFromComplex
 
 
 class Converter:
@@ -75,12 +75,12 @@ class Converter:
 
         if self.plip:
             return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
-                                  records=['ATOM', 'OTHERS'],
+                                  records=['ATOM','HETATM', 'OTHERS'],
                                   gz=False,
                                   append_newline=True), os.remove(self.protein), os.remove(self.flex), \
                    ObtainInteractionsFromComplex(output_name).connect_retrieve()
         else:
             return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
-                                  records=['ATOM', 'OTHERS'],
+                                  records=['ATOM','HETATM', 'OTHERS'],
                                   gz=False,
                                   append_newline=True), os.remove(self.protein), os.remove(self.flex)
