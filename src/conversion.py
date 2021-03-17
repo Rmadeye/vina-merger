@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from biopandas.pdb import PandasPdb
 
-from src.plip_extension import ObtainInteractionsFromComplex
+from src.plip_cleaner import PLIP_modifier
 
 
 class Converter:
@@ -45,6 +45,8 @@ class Converter:
             hetatms = flex_df.df['ATOM'].loc[flex_df.df['ATOM']['record_name'] == 'HETATM']
             hetatms = hetatms.drop(['line_idx'], axis=1)
             prot_df.df['ATOM'] = prot_df.df['ATOM'].append(hetatms, ignore_index=True)
+            print(f"Ligand abbreviation detected as: {hetatms['residue_name'][0]}")
+            ligand_abbr = hetatms['residue_name'][0]
 
         else:
             hetatm_df = flex_df.df['HETATM']
@@ -53,7 +55,9 @@ class Converter:
             hetatm_df['blank_4'] = hetatm_df['blank_4'].iloc[0:0]
             hetatm_df['blank_4'] = hetatm_df['blank_4'].fillna('')
             hetatm_df = hetatm_df.drop(['line_idx'], axis=1)
-
+            # print(f"Ligand abbreviation detected as: {hetatms['residue_name'][0]}")
+            ligand_abbr = hetatm_df['residue_name'][0]
+            print(ligand_abbr)
             prot_df.df['ATOM'] = prot_df.df['ATOM'].append(hetatm_df, ignore_index=True)
 
         remarks = {'record_name': 'REMARK',
@@ -74,11 +78,12 @@ class Converter:
         )
 
         if self.plip:
-            return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
-                                  records=['ATOM', 'OTHERS'],
-                                  gz=False,
-                                  append_newline=True), os.remove(self.protein), os.remove(self.flex), \
-                   ObtainInteractionsFromComplex(output_name).connect_retrieve()
+            prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name), records=['ATOM', 'OTHERS'], gz=False,
+                           append_newline=True), os.remove(self.protein), os.remove(self.flex)
+            os.system(f"plip -f {output_name} -v -p -x -y --dnareceptor --model 1 -o {output_name}_plip")
+            for pse in os.listdir(f"{output_name}_plip"):
+                if pse.endswith(".pse"):
+                    PLIP_modifier(file=f'{output_name}_plip/' + pse, ligand_residue=ligand_abbr).customize_plip_pse()
         else:
             return prot_df.to_pdb(path=os.getcwd() + '/{}'.format(output_name),
                                   records=['ATOM', 'OTHERS'],

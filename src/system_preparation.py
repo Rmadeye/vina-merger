@@ -29,7 +29,7 @@ class PDBQTprep:
             prot_df = PandasPdb().read_pdb(self.prot)
             prot_df.df['ATOM'] = prot_df.df['ATOM'][prot_df.df['ATOM']['element_symbol'] != 'H']  # deprotonate
 
-            prot_df.df['ATOM']['residue_name'].replace(to_replace = 'CYX', value = 'CYS', inplace = True)
+            prot_df.df['ATOM']['residue_name'].replace(to_replace='CYX', value='CYS', inplace=True)
             prot_df.df['ATOM']['residue_name'].replace(to_replace='HIE', value='HIS', inplace=True)
             prot_df.df['ATOM']['residue_name'].replace(to_replace='HID', value='HIS', inplace=True)
             prot_df.df['ATOM']['residue_name'].replace(to_replace='HIP', value='HIS', inplace=True)
@@ -43,8 +43,7 @@ class PDBQTprep:
                                   gz=False,
                                   append_newline=True)
 
-        prepare_protein()
-        prepare_ligand()
-        print(self.plip)
-        return Converter(os.getcwd() + '/{}-dehyd.pdb'.format(self.protname.split('.')[0]),
+        return prepare_protein(), \
+               prepare_ligand(), \
+               Converter(os.getcwd() + '/{}-dehyd.pdb'.format(self.protname.split('.')[0]),
                          os.getcwd() + '/{}-prep.pdb'.format(self.flexname.split('.')[0]), self.plip).convert()

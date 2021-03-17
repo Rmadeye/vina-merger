@@ -13,7 +13,7 @@ inputdata.add_argument('-ir', '--rigid-pdb', nargs='*',
 inputdata.add_argument('-if', '--flex-pdb', nargs='*',
                        help="Input flexible pdb file", required=True)
 inputdata.add_argument('-p', '--plip', action='store_true',
-                       help="Online PLIP calculations", required=False)
+                       help="Local PLIP calculations", required=False)
 
 args = inputdata.parse_args()
 convert = PDBQTprep(protein_file=args.rigid_pdb[0],
