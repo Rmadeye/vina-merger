@@ -55,9 +55,8 @@ class Converter:
             hetatm_df['blank_4'] = hetatm_df['blank_4'].iloc[0:0]
             hetatm_df['blank_4'] = hetatm_df['blank_4'].fillna('')
             hetatm_df = hetatm_df.drop(['line_idx'], axis=1)
-            # print(f"Ligand abbreviation detected as: {hetatms['residue_name'][0]}")
             ligand_abbr = hetatm_df['residue_name'][0]
-            print(ligand_abbr)
+            print(f"Ligand abbreviation: {ligand_abbr}")
             prot_df.df['ATOM'] = prot_df.df['ATOM'].append(hetatm_df, ignore_index=True)
 
         remarks = {'record_name': 'REMARK',
